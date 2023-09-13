@@ -4,8 +4,7 @@
 
 TODO: Setup script to retrieve random video clip from Pexels.com
 TODO: Setup script to retrieve random audio clip from a downloaded set of audio files
-TODO: Change the caption text to have no background and to be white with a black outline
-TODO: Setup a data set for the videos to randomly pull from
+TODO: Setup a data pool for the videos to randomly pull from
 
 """
 
@@ -69,7 +68,7 @@ def get_clip():
     return clip
 
 
-def generate_text(txt: str, font='Lato-Bold', size=(720, None), font_size=50, opacity=0.5, padding=(60, 40), bg=True,
+def generate_text(txt: str, font='Lato-Bold', size=(720, None), font_size=50, opacity=0.5, padding=(60, 40),
                   radius=30, text_type='caption', color=(0, 0, 0), text_color='white', stroke_color=None, stroke_width=0):
     """
     Generates a text clip to be inserted into a video.
@@ -80,7 +79,6 @@ def generate_text(txt: str, font='Lato-Bold', size=(720, None), font_size=50, op
     :param font_size: font size of the text
     :param opacity: opacity of the text background
     :param padding: padding of the text background
-    :param bg: determines whether or not a background will be applied
     :param radius: radius of the background text borders
     :param text_type: text type
     :param color: color of the text background
@@ -95,20 +93,17 @@ def generate_text(txt: str, font='Lato-Bold', size=(720, None), font_size=50, op
     text_clip = TextClip(txt=txt, size=size, font=font, stroke_color=stroke_color, stroke_width=stroke_width,
                          color=text_color, method=text_type, fontsize=font_size).set_position('center')
 
-    if bg:
-        # create the color clip rectangle
-        color_clip = ColorClip(size=(text_clip.size[0] + padding[0], text_clip.size[1] + padding[1]), color=color)
+    # create the color clip rectangle
+    color_clip = ColorClip(size=(text_clip.size[0] + padding[0], text_clip.size[1] + padding[1]), color=color)
 
-        # save the clip as an image to be rounded
-        CompositeVideoClip([color_clip]).save_frame('temp.png')
+    # save the clip as an image to be rounded
+    CompositeVideoClip([color_clip]).save_frame('temp.png')
 
-        # round the corners of the rectangle
-        round_corners(Image.open('temp.png'), radius).save('temp.png')
+    # round the corners of the rectangle
+    round_corners(Image.open('temp.png'), radius).save('temp.png')
 
-        # open final version of the rectangle into an image clip
-        bg_clip = ImageClip('temp.png').set_opacity(opacity)
-    else:
-        bg_clip = None
+    # open final version of the rectangle into an image clip
+    bg_clip = ImageClip('temp.png').set_opacity(opacity)
 
     # overlay the text on top of the background clip
     final_clip = CompositeVideoClip([bg_clip, text_clip])
@@ -138,8 +133,8 @@ def generate_fact_video(topic: str, part1: str, part2: str, channel: str):
                                 font='Oswald-Medium').set_position(('center', 200)).set_duration(8))
 
     # create part text clips
-    part1_clip = generate_text(part1, font_size=70, bg=False, text_color='white', stroke_color='black', stroke_width=1).set_position('center').set_duration(3.5).set_start(0)
-    part2_clip = generate_text(part2, font_size=70, bg=False, text_color='white', stroke_color='black', stroke_width=1).set_position('center').set_duration(4).set_start(4)
+    part1_clip = generate_text(part1, font_size=75, opacity=0, text_color='white', stroke_color='black', stroke_width=3).set_position('center').set_duration(3.5).set_start(0)
+    part2_clip = generate_text(part2, font_size=75, opacity=0, text_color='white', stroke_color='black', stroke_width=3).set_position('center').set_duration(4).set_start(4)
 
     # create channel name text clip
     channel_clip = generate_text(channel, size=None, font_size=50, opacity=1, text_type='label',

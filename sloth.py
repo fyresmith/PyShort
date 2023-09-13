@@ -17,6 +17,77 @@ __email__ = "me@calebmsmith.com"
 __status__ = "Development"
 
 
+def template_video(template: dict, name: str):
+    """
+    Generates a video based upon a JSON template.
+
+    :param template:
+    :param name:
+    :return:
+    """
+
+    video_elements = []
+
+    video_duration = template['video_data']['duration']
+
+    video_elements.append(random_video_clip(video_duration, 'nature').set_pos('center').set_duration(video_duration))
+
+    for element in template['text_elements'].keys():
+        if template['text_elements'][element]['duration'] == 'x':
+            duration = video_duration
+        else:
+            duration = template['text_elements'][element]['duration']
+
+        template_data = template['text_elements'][element]
+
+        video_elements.append(generate_text(template_data[element]['text'],
+                                            font=template_data['font'],
+                                            box_size=(template_data['box_size'][0], template_data['box_size'][1]),
+                                            font_size=template_data['font_size'],
+                                            bg_opacity=template_data['bg_opacity'],
+                                            bg_padding=(template_data['bg_padding'][0], template_data['bg_padding'][1]),
+                                            bg_color=(template_data['bg_color'][0], template_data['bg_color'][1],
+                                                      template_data['bg_color'][2]),
+                                            radius=template_data['radius'],
+                                            text_type=template_data['text_type'],
+                                            text_color=template_data['text_color'],
+                                            stroke_width=template_data['stroke_width'],
+                                            stroke_color=template_data['stroke_color']
+                                            ).set_position((template_data['position'][0], template_data['position'][1]))
+                              .set_duration(duration).set_start(template_data['start_time']))
+
+    video = CompositeVideoClip(video_elements).set_duration(template['video_data']['duration'])
+
+    # create temporary video file
+    video.write_videofile('temp.mp4')
+
+    # get audio
+    audio = get_audio_clip()
+
+    # create temporary audio file
+    audio.write_audiofile('temp.mp3')
+
+    # create file path
+    filename = 'Output/' + name + '.mp4'
+
+    # create ffmpeg command
+    command = ['ffmpeg',
+               '-y',
+               '-i', "temp.mp4",
+               '-i', "temp.mp3",
+               '-c:v', 'copy',
+               '-c:a', 'aac',
+               '-shortest',
+               filename]
+
+    # run ffmpeg command
+    subprocess.run(command)
+
+    # remove temporary files
+    os.remove('temp.mp3')
+    os.remove('temp.mp4')
+
+
 def generate_fact_video(topic: str, part1: str, part2: str, channel: str):
     """
     Generates a Youtube Short/TikTok/Instagram Reel, in the format of a two-part fact.
@@ -60,11 +131,11 @@ def generate_fact_video(topic: str, part1: str, part2: str, channel: str):
     filename = 'Output/' + part1 + ' #shorts.mp4'
 
     command = ['ffmpeg',
-               '-y',  # approve output file overwite
+               '-y',
                '-i', "temp.mp4",
                '-i', "temp.mp3",
                '-c:v', 'copy',
-               '-c:a', 'aac',  # to convert mp3 to aac
+               '-c:a', 'aac',
                '-shortest',
                filename]
 

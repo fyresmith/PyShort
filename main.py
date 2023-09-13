@@ -1,10 +1,11 @@
 from sloth import *
+import data
 
 
 def main():
-    generate_fact_video('Insecurity Fact', 'Insecurity is a mask we wear hiding our true selves...',
-                        '...but it\'s also the mask '
-                        'that keeps us from finding authentic connections.', '@littlethoughtbites')
+    data_set = data.random_data()
+
+    generate_fact_video(data_set[0], data_set[1], data_set[2], '@littlethoughtbites')
 
 
 if __name__ == '__main__':

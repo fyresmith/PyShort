@@ -1,3 +1,5 @@
+""" main.py """
+
 from sloth import *
 import data
 

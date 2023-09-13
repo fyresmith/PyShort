@@ -1,3 +1,5 @@
+""" video_engine.py """
+
 import requests
 import random
 from pexelsPy import API
@@ -35,21 +37,21 @@ def round_corners(im: Image, rad: int):
     return im
 
 
-def generate_text(txt: str, font='Lato-Bold', size=(720, None), font_size=50, opacity=0.5, padding=(60, 40),
-                  radius=30, text_type='caption', color=(0, 0, 0), text_color='white', stroke_color=None, stroke_width=0):
+def generate_text(text: str, text_type='caption', text_color='white', font='Lato-Bold', box_size=(720, None), font_size=50, bg_opacity=0.5, bg_padding=(60, 40),
+                  bg_color=(0, 0, 0), radius=30, stroke_color=None, stroke_width=0):
     """
     Generates a text clip to be inserted into a video.
 
-    :param txt: raw text for the clip
-    :param font: font for the clip
-    :param size: size of the clip mask
-    :param font_size: font size of the text
-    :param opacity: opacity of the text background
-    :param padding: padding of the text background
-    :param radius: radius of the background text borders
+    :param text: raw text for the clip
     :param text_type: text type
-    :param color: color of the text background
     :param text_color: color of the text itself
+    :param font: font for the clip
+    :param box_size: size of the clip mask
+    :param font_size: font size of the text
+    :param bg_opacity: opacity of the text background
+    :param bg_padding: padding of the text background
+    :param bg_color: color of the text background
+    :param radius: radius of the background text borders
     :param stroke_color: outline color
     :param stroke_width: outline width
 
@@ -57,11 +59,11 @@ def generate_text(txt: str, font='Lato-Bold', size=(720, None), font_size=50, op
     """
 
     # create base text clip
-    text_clip = TextClip(txt=txt, size=size, font=font, stroke_color=stroke_color, stroke_width=stroke_width,
+    text_clip = TextClip(txt=text, size=box_size, font=font, stroke_color=stroke_color, stroke_width=stroke_width,
                          color=text_color, method=text_type, fontsize=font_size).set_position('center')
 
     # create the color clip rectangle
-    color_clip = ColorClip(size=(text_clip.size[0] + padding[0], text_clip.size[1] + padding[1]), color=color)
+    color_clip = ColorClip(size=(text_clip.size[0] + bg_padding[0], text_clip.size[1] + bg_padding[1]), color=bg_color)
 
     # save the clip as an image to be rounded
     CompositeVideoClip([color_clip]).save_frame('temp.png')
@@ -70,7 +72,10 @@ def generate_text(txt: str, font='Lato-Bold', size=(720, None), font_size=50, op
     round_corners(Image.open('temp.png'), radius).save('temp.png')
 
     # open final version of the rectangle into an image clip
-    bg_clip = ImageClip('temp.png').set_opacity(opacity)
+    bg_clip = ImageClip('temp.png').set_opacity(bg_opacity)
+
+    # delete temporary image
+    os.remove('temp.png')
 
     # overlay the text on top of the background clip
     final_clip = CompositeVideoClip([bg_clip, text_clip])

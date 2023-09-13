@@ -33,20 +33,19 @@ def generate_fact_video(topic: str, part1: str, part2: str, channel: str):
     video_clip = random_video_clip().set_pos('center').set_duration(8)
 
     # create topic text clip
-    topic_clip = (generate_text(topic.upper(), size=None, font_size=83, opacity=1, radius=20,
-                                text_color='black', color=(255, 255, 255), text_type='label',
+    topic_clip = (generate_text(topic.upper(), box_size=None, font_size=83, bg_opacity=1, radius=20,
+                                text_color='black', bg_color=(255, 255, 255), text_type='label',
                                 font='Oswald-Medium').set_position(('center', 200)).set_duration(8))
 
     # create part text clips
-    part1_clip = generate_text(part1, font='Lato-Black', font_size=75, opacity=0, text_color='white',
+    part1_clip = generate_text(part1, font='Lato-Black', font_size=75, bg_opacity=0, text_color='white',
                                stroke_color='black', stroke_width=3).set_position('center').set_duration(3.5).set_start(0)
-
-    part2_clip = generate_text(part2, font='Lato-Black', font_size=75, opacity=0, text_color='white',
+    part2_clip = generate_text(part2, font='Lato-Black', font_size=75, bg_opacity=0, text_color='white',
                                stroke_color='black', stroke_width=3).set_position('center').set_duration(4).set_start(4)
 
     # create channel name text clip
-    channel_clip = generate_text(channel, size=None, font_size=50, opacity=1, text_type='label',
-                                 padding=(60, 30), radius=25).set_position(('center', 1600)).set_duration(8)
+    channel_clip = generate_text(channel, box_size=None, font_size=50, bg_opacity=1, text_type='label',
+                                 bg_padding=(60, 30), radius=25).set_position(('center', 1600)).set_duration(8)
 
     # compose the video
     video = CompositeVideoClip([video_clip, topic_clip, part1_clip, part2_clip, channel_clip]).set_duration(8)
@@ -69,16 +68,10 @@ def generate_fact_video(topic: str, part1: str, part2: str, channel: str):
                '-shortest',
                filename]
 
+    # run ffmpeg command
     subprocess.run(command)
 
-    # set audio
-    # final_clip = video.set_audio(audio)
+    os.remove('temp.mp3')
+    os.remove('temp.mp4')
 
-    # set up the filename
-    # filename = 'Output/' + part1 + ' #shorts.mp4'
-
-    # export the completed short
-    # final_clip.write_videofile(filename)
-
-    # return the filename
     return filename

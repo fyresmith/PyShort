@@ -30,7 +30,7 @@ def generate_fact_video(topic: str, part1: str, part2: str, channel: str):
     """
 
     # get video clip
-    video_clip = random_video_clip().set_pos('center').set_duration(8)
+    video_clip = random_video_clip('nature').set_pos('center').set_duration(8)
 
     # create topic text clip
     topic_clip = (generate_text(topic.upper(), box_size=None, font_size=83, bg_opacity=1, radius=20,

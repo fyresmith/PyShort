@@ -145,18 +145,21 @@ def fetch_video(topic):
         page_num += 1
 
 
-def random_video_clip():
+def random_video_clip(duration: int, topic: str):
     """
     Retrieves a random video file from Pexels and formats it
 
     :return: 8-second video clip
     """
 
-    # get a random video from pexels
-    video_path = fetch_video('nature')
+    while True:
+        # fetch a random video from Pexels
+        video_path = fetch_video(topic)
 
-    # open video
-    clip = VideoFileClip(video_path).without_audio()
+        clip = VideoFileClip(video_path).without_audio()
+
+        if clip.duration >= duration:
+            break
 
     # resize clip
     clip = clip.resize(newsize=(1080, 1920))

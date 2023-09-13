@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-""" Sloth.py: A small python script used to automate a YT Shorts Channel
+""" sloth.py: A small python script used to automate a YT Shorts Channel
 
 TODO: Setup script to retrieve random video clip from Pexels.com
 TODO: Setup script to retrieve random audio clip from a downloaded set of audio files
@@ -11,6 +11,8 @@ TODO: Setup a data pool for the videos to randomly pull from
 
 from moviepy.editor import *
 import random
+import os
+import subprocess
 from PIL import Image, ImageDraw
 
 __author__ = "Caleb Smith"
@@ -21,6 +23,46 @@ __version__ = "1.0"
 __maintainer__ = "Caleb Smith"
 __email__ = "me@calebmsmith.com"
 __status__ = "Development"
+
+
+def get_audio_clip():
+    """
+    Selects a random 8-second audio clip from the Audio folder.
+
+    :return: 8-second audio clip
+    """
+
+    # open audio
+    clip = AudioFileClip('Audio/' + random.choice(os.listdir('Audio')))
+
+    # geta  random 8-second segment based on clip duration
+    end_point = random.randint(8, int(clip.duration))
+
+    # get sub clip
+    clip = clip.subclip(end_point - 8, end_point)
+
+    # return final product
+    return clip
+
+
+def get_video_clip():
+    """
+    Selects a random 8-second video clip from the Video foldery.
+
+    :return: 8-second video clip
+    """
+
+    # open video
+    clip = VideoFileClip("Video/input.mp4")
+
+    # get a random 8-second segment based on clip duration
+    end_point = random.randint(8, int(clip.duration))
+
+    # get sub clip
+    clip = clip.subclip(end_point - 8, end_point)
+
+    # return final product
+    return clip
 
 
 def round_corners(im: Image, rad: int):
@@ -47,25 +89,6 @@ def round_corners(im: Image, rad: int):
     im.putalpha(alpha)
 
     return im
-
-
-def get_clip():
-    """
-    Selects a random 8-second video clip from the b-roll library.
-
-    :return: 8-second video clip
-    """
-
-    # open video
-    clip = VideoFileClip("input.mp4")
-
-    # get a random 8-second segment based on clip duration
-    end_point = random.randint(8, int(clip.duration))
-
-    # return sub clip
-    clip = clip.subclip(end_point - 8, end_point)
-
-    return clip
 
 
 def generate_text(txt: str, font='Lato-Bold', size=(720, None), font_size=50, opacity=0.5, padding=(60, 40),
@@ -125,7 +148,7 @@ def generate_fact_video(topic: str, part1: str, part2: str, channel: str):
     """
 
     # get video clip
-    video_clip = get_clip().set_pos('center').set_duration(8)
+    video_clip = get_video_clip().set_pos('center').set_duration(8)
 
     # create topic text clip
     topic_clip = (generate_text(topic.upper(), size=None, font_size=83, opacity=1, radius=20,
@@ -133,8 +156,8 @@ def generate_fact_video(topic: str, part1: str, part2: str, channel: str):
                                 font='Oswald-Medium').set_position(('center', 200)).set_duration(8))
 
     # create part text clips
-    part1_clip = generate_text(part1, font_size=75, opacity=0, text_color='white', stroke_color='black', stroke_width=3).set_position('center').set_duration(3.5).set_start(0)
-    part2_clip = generate_text(part2, font_size=75, opacity=0, text_color='white', stroke_color='black', stroke_width=3).set_position('center').set_duration(4).set_start(4)
+    part1_clip = generate_text(part1, font='Lato-Black', font_size=75, opacity=0, text_color='white', stroke_color='black', stroke_width=3).set_position('center').set_duration(3.5).set_start(0)
+    part2_clip = generate_text(part2, font='Lato-Black', font_size=75, opacity=0, text_color='white', stroke_color='black', stroke_width=3).set_position('center').set_duration(4).set_start(4)
 
     # create channel name text clip
     channel_clip = generate_text(channel, size=None, font_size=50, opacity=1, text_type='label',
@@ -143,11 +166,17 @@ def generate_fact_video(topic: str, part1: str, part2: str, channel: str):
     # compose the video
     video = CompositeVideoClip([video_clip, topic_clip, part1_clip, part2_clip, channel_clip]).set_duration(8)
 
-    # setup the filename
+    # get audio
+    audio = get_audio_clip()
+
+    # set audio
+    final_clip = video.set_audio(audio)
+
+    # set up the filename
     filename = 'Output/' + part1 + ' #shorts.mp4'
 
     # export the completed short
-    video.write_videofile(filename)
+    final_clip.write_videofile(filename)
 
     # return the filename
     return filename

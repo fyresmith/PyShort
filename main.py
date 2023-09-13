@@ -1,4 +1,4 @@
-from Sloth import *
+from sloth import *
 
 
 def main():

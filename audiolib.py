@@ -1,3 +1,5 @@
+""" audiolib.py """
+
 import random
 import os
 from pytube import YouTube

@@ -1,4 +1,4 @@
-""" audio_engine.py """
+""" audio_lib.py """
 
 import random
 from pytube import YouTube
@@ -34,8 +34,7 @@ def download_audio(url: str):
 def populate_audio():
     """
     Populates the Audio folder with a set of audio files from YouTube
-
-    :return:
+    :return: None
     """
 
     urls = ['NvwnIZX-1cs', '-iNHtdL-zu4',
@@ -44,28 +43,29 @@ def populate_audio():
             'Ip6cw8gfHHI', '1i8WJ8cRWsE',
             'QCtEe-zsCtQ', 'eKL3TceSxvk',
             'qnFcVpItds4', 'jKRW9ZV8QzI',
-            'mmO3KqoK1vU']
+            'mmO3KqoK1vU', 't2-BUAkQ9Ds',
+            'TMO3Q16Yvp4', 'XKGXK_koHic']
 
     # download videos
     for video in urls:
         download_audio('https://www.youtube.com/watch?v=' + video)
 
 
-def get_audio_clip():
+def random_audio_clip(duration: float):
     """
-    Selects a random 8-second audio clip from the Audio folder.
+    Selects a random X-second audio clip from the Audio folder.
 
-    :return: 8-second audio clip
+    :return: X-second audio clip
     """
 
     # open audio
-    clip = AudioFileClip('Audio/' + random.choice(os.listdir('Audio')))
+    clip = AudioFileClip('audio/' + random.choice(os.listdir('audio')))
 
-    # geta  random 8-second segment based on clip duration
-    end_point = random.randint(8, int(clip.duration))
+    # geta  random X-second segment based on clip duration
+    end_point = random.uniform(duration, clip.duration)
 
     # get sub clip
-    clip = clip.subclip(end_point - 8, end_point)
+    clip = clip.subclip(end_point - duration, end_point)
 
     # return final product
     return clip

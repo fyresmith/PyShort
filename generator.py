@@ -6,8 +6,15 @@ Python script which takes input for video, audio, and data and compiles them int
 
 import subprocess
 from moviepy.editor import *
-from video_lib import *
-from audio_lib import *
+from video import *
+from audio import *
+
+__author__ = "Caleb Smith"
+__credits__ = ["Caleb Smith"]
+__version__ = "1.0"
+__maintainer__ = "Caleb Smith"
+__email__ = "me@calebmsmith.com"
+__status__ = "Development"
 
 
 class Element:
@@ -259,9 +266,12 @@ class Short:
         :param title: title of the video
         :return: None
         """
+
+        # write to temporary files
         self.compile_elements().write_videofile('temp.mp4')
         self._audio.write_audiofile('temp.mp3')
 
+        # construct command
         command = ['ffmpeg',
                    '-y',
                    '-i', "temp.mp4",
@@ -274,8 +284,41 @@ class Short:
         # run the ffmpeg command
         subprocess.run(command)
 
+        # remove temporary files
         os.remove('temp.mp3')
         os.remove('temp.mp4')
+
+
+def export_video(filename: str, video: VideoClip, audio: AudioClip):
+    """
+    Exports a video given the filename, video component, and audio component.
+
+    :param filename: name for the new file
+    :param video: video clip
+    :param audio: audio clip
+    :return: None
+    """
+
+    # write to temporary files
+    video.write_videofile('temp.mp4')
+    audio.write_audiofile('temp.mp3')
+
+    # construct command
+    command = ['ffmpeg',
+               '-y',
+               '-i', "temp.mp4",
+               '-i', "temp.mp3",
+               '-c:v', 'copy',
+               '-c:a', 'aac',
+               '-shortest',
+               filename]
+
+    # run ffmpeg command
+    subprocess.run(command)
+
+    # remove temporary files
+    os.remove('temp.mp3')
+    os.remove('temp.mp4')
 
 
 def generate_fact_video(duration: float, data: dict, transition_timing=0.5):

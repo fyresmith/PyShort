@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-""" video_lib.py """
+""" videolib.py """
 
 import requests
 import random
@@ -9,7 +9,14 @@ from dotenv import load_dotenv
 from moviepy.editor import *
 from PIL import Image, ImageDraw
 
-# load environment variables from a .env file
+__author__ = "Caleb Smith"
+__credits__ = ["Caleb Smith"]
+__version__ = "1.0"
+__maintainer__ = "Caleb Smith"
+__email__ = "me@calebmsmith.com"
+__status__ = "Development"
+
+# load .env
 load_dotenv()
 
 # retrieve the Pexels API key from environment variables

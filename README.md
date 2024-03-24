@@ -6,11 +6,11 @@ PyShort is a Python project that allows you to create simple YouTube shorts or T
 ```
 git clone https://github.com/fyresmith/PyShort.git
 ```
-3. Navigate to the project director:
+2. Navigate to the project director:
 ```
 cd PyShort
 ```
-5. Install the dependencies:
+3. Install the dependencies:
 ```
 pip install -r requirements.txt
 ```

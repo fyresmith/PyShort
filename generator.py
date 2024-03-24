@@ -386,3 +386,5 @@ def generate_fact_video(duration: float, data: dict, transition_timing=0.5):
 
     # render the video
     short.render(data['captions'][0] + ' #shorts')
+
+    return 'output/' + data['captions'][0] + ' #shorts.mp4'
